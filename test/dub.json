@@ -1,0 +1,21 @@
+{
+    "name": "test",
+    "description": "BindBC-KTX test",
+    "homepage": "https://github.com/DLangGamedev/bindbc-ktx",
+    "license": "BSL-1.0",
+    "authors": [
+        "Timur Gafarov"
+    ],
+    "copyright": "Copyright (C) 2025, Timur Gafarov",
+    
+    "dependencies": {
+        "bindbc-ktx": { "path": ".." }
+    },
+    
+    "importPaths": ["src"],
+    "sourcePaths": ["src"],
+    
+    "buildRequirements": [
+        "allowWarnings"
+    ]
+}
