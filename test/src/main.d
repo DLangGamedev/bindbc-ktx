@@ -62,14 +62,15 @@ void main()
     }
     
     writeln("vkFormat: ", cast(VkFormat)tex.vkFormat); // should be VK_FORMAT_UNDEFINED for Basis Universal
-    writeln("supercompressionScheme: ", tex.supercompressionScheme);
-    
-    // Transcode to DXT1
-    ktx_transcode_fmt_e targetFormat = ktx_transcode_fmt_e.KTX_TTF_BC1_RGB;
+    writeln("supercompression scheme: ", tex.supercompressionScheme);
 
-    writeln("Needs transcoding: ", ktxTexture2_NeedsTranscoding(tex));
-    if (ktxTexture2_NeedsTranscoding(tex))
+    bool needsTranscoding = ktxTexture2_NeedsTranscoding(tex);
+    writeln("Needs transcoding: ", needsTranscoding);
+    if (needsTranscoding)
     {
+        // Transcode to DXT1
+        ktx_transcode_fmt_e targetFormat = ktx_transcode_fmt_e.KTX_TTF_BC1_RGB;
+        
         writeln("Transcoding...");
         err = ktxTexture2_TranscodeBasis(tex, targetFormat, 0);
         if (err != KTX_error_code.KTX_SUCCESS)
@@ -77,7 +78,7 @@ void main()
             writeln(err);
             return;
         }
+        
+        writeln("Transcoded vkFormat: ", cast(VkFormat)tex.vkFormat);
     }
-    
-    writeln("Transcoded vkFormat: ", cast(VkFormat)tex.vkFormat);
 }
