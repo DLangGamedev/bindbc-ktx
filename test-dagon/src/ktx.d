@@ -645,7 +645,7 @@ bool loadKTX2(InputStream istrm, TextureBuffer* buffer, bool* generateMipmaps)
     
     if (ktxTexture2_NeedsTranscoding(tex))
     {
-        // TODO: user-specified format
+        // TODO: use user-specified format
         // KTX_TTF_RGBA32, KTX_TTF_BC1_RGB, KTX_TTF_BC3_RGBA, KTX_TTF_BC4_R, KTX_TTF_BC5_RG, KTX_TTF_BC7_RGBA, KTX_TTF_ASTC_4x4_RGBA
         ktx_transcode_fmt_e targetFormat = ktx_transcode_fmt_e.KTX_TTF_BC1_RGB;
         err = ktxTexture2_TranscodeBasis(tex, targetFormat, 0);
@@ -686,35 +686,17 @@ bool loadKTX2(InputStream istrm, TextureBuffer* buffer, bool* generateMipmaps)
     buffer.mipLevels = tex.numLevels;
     buffer.data = New!(ubyte[])(tex.dataSize);
     
-    if (buffer.mipLevels == 1)
+    size_t dstOffset = 0;
+    for (uint cubeFace = 0; cubeFace < tex.numFaces; cubeFace++)
     {
-        buffer.data[] = tex.pData[0..tex.dataSize];
-    }
-    else
-    {
-        // KTX2 stores mip levels in reverse order
-        uint w = 1;
-        uint h = 1;
-        size_t srcOffset = 0;
-        const uint blockWidth = 4;
-        const uint blockHeight = 4;
-        const uint pixelSize = format.pixelSize;
-        for (uint m = 0; m < buffer.mipLevels; m++)
+        for (uint mipLevel = 0; mipLevel < buffer.mipLevels; mipLevel++)
         {
-            size_t mipSize;
-            if (format.isCompressed)
-                mipSize = ((w + blockWidth - 1) / blockWidth) * ((h + blockHeight - 1) / blockHeight) * format.blockSize;
-            else
-                mipSize = w * h * pixelSize;
+            ktx_size_t mipLevelOffset;
+            ktxTexture2_GetImageOffset(tex, mipLevel, 0, cubeFace, &mipLevelOffset);
+            ktx_size_t mipLevelSize = ktxTexture_GetImageSize(tex, mipLevel);
             
-            for(size_t i = 0; i < mipSize; i++)
-            {
-                buffer.data[tex.dataSize - srcOffset - mipSize + i] = tex.pData[srcOffset + i];
-            }
-            
-            srcOffset += mipSize;
-            w *= 2;
-            h *= 2;
+            buffer.data[dstOffset..dstOffset+mipLevelSize] = tex.pData[mipLevelOffset..mipLevelOffset+mipLevelSize];
+            dstOffset += mipLevelSize;
         }
     }
     

@@ -323,5 +323,15 @@ alias ktx_transcode_flags = ktx_uint32_t;
 
 auto ktxTexture_NeedsTranscoding(TEX)(TEX* tex)
 {
-    return tex.vtbl.NeedsTranscoding(tex);
+    return tex.vtbl.NeedsTranscoding(cast(ktxTexture*)tex);
+}
+
+auto ktxTexture_GetImageSize(TEX)(TEX* tex, ktx_uint32_t level)
+{
+    return tex.vtbl.GetImageSize(cast(ktxTexture*)tex, level);
+}
+
+auto ktxTexture_IterateLevels(TEX)(TEX* tex, PFNKTXITERCB iterCb, void* userdata)
+{
+    return tex.vtbl.IterateLevels(cast(ktxTexture*)tex, iterCb, userdata);
 }

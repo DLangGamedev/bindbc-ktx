@@ -37,6 +37,7 @@ alias f_ktxTexture_CreateFromStdioStream = KTX_error_code function(FILE* stdioSt
 alias f_ktxTexture_CreateFromNamedFile = KTX_error_code function(const(char)* filename, ktxTextureCreateFlags createFlags, ktxTexture** newTex);
 alias f_ktxTexture_CreateFromMemory = KTX_error_code function(const(ktx_uint8_t)* bytes, ktx_size_t size, ktxTextureCreateFlags createFlags, ktxTexture** newTex);
 alias f_ktxTexture_CreateFromStream = KTX_error_code function(ktxStream* stream, ktxTextureCreateFlags createFlags, ktxTexture** newTex);
+alias f_ktxTexture_IterateLevelFaces = KTX_error_code function(ktxTexture* tex, PFNKTXITERCB iterCb, void* userdata);
 
 // ktxTexture1 functions
 alias f_ktxTexture1_CreateFromStdioStream = KTX_error_code function(FILE* stdioStream, ktxTextureCreateFlags createFlags, ktxTexture1** newTex);
@@ -54,3 +55,4 @@ alias f_ktxTexture2_CreateFromStream = KTX_error_code function(ktxStream* stream
 alias f_ktxTexture2_Destroy = void function(ktxTexture2* tex);
 alias f_ktxTexture2_NeedsTranscoding = ktx_bool_t function(ktxTexture2* tex);
 alias f_ktxTexture2_TranscodeBasis = KTX_error_code function(ktxTexture2* tex, ktx_transcode_fmt_e fmt, ktx_transcode_flags transcodeFlags);
+alias f_ktxTexture2_GetImageOffset = KTX_error_code function(ktxTexture2* tex, ktx_uint32_t level, ktx_uint32_t layer, ktx_uint32_t faceSlice, ktx_size_t* pOffset);

@@ -35,6 +35,7 @@ __gshared
     f_ktxTexture_CreateFromNamedFile ktxTexture_CreateFromNamedFile;
     f_ktxTexture_CreateFromMemory ktxTexture_CreateFromMemory;
     f_ktxTexture_CreateFromStream ktxTexture_CreateFromStream;
+    f_ktxTexture_IterateLevelFaces ktxTexture_IterateLevelFaces;
     
     f_ktxTexture1_CreateFromStdioStream ktxTexture1_CreateFromStdioStream;
     f_ktxTexture1_CreateFromNamedFile ktxTexture1_CreateFromNamedFile;
@@ -50,4 +51,5 @@ __gshared
     f_ktxTexture2_Destroy ktxTexture2_Destroy;
     f_ktxTexture2_NeedsTranscoding ktxTexture2_NeedsTranscoding;
     f_ktxTexture2_TranscodeBasis ktxTexture2_TranscodeBasis;
+    f_ktxTexture2_GetImageOffset ktxTexture2_GetImageOffset;
 }
