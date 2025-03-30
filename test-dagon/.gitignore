@@ -1,0 +1,17 @@
+.dub
+docs.json
+__dummy.html
+docs/
+/test-dagon
+test-dagon.so
+test-dagon.dylib
+test-dagon.dll
+test-dagon.a
+test-dagon.lib
+test-dagon-test-*
+*.exe
+*.pdb
+*.o
+*.obj
+*.lst
+data/__internal

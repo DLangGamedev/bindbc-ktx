@@ -31,9 +31,23 @@ import bindbc.ktx.signatures;
 
 __gshared
 {
+    f_ktxTexture_CreateFromStdioStream ktxTexture_CreateFromStdioStream;
     f_ktxTexture_CreateFromNamedFile ktxTexture_CreateFromNamedFile;
+    f_ktxTexture_CreateFromMemory ktxTexture_CreateFromMemory;
+    f_ktxTexture_CreateFromStream ktxTexture_CreateFromStream;
+    
+    f_ktxTexture1_CreateFromStdioStream ktxTexture1_CreateFromStdioStream;
     f_ktxTexture1_CreateFromNamedFile ktxTexture1_CreateFromNamedFile;
+    f_ktxTexture1_CreateFromMemory ktxTexture1_CreateFromMemory;
+    f_ktxTexture1_CreateFromStream ktxTexture1_CreateFromStream;
+    f_ktxTexture1_Destroy ktxTexture1_Destroy;
+    f_ktxTexture1_NeedsTranscoding ktxTexture1_NeedsTranscoding;
+    
+    f_ktxTexture2_CreateFromStdioStream ktxTexture2_CreateFromStdioStream;
     f_ktxTexture2_CreateFromNamedFile ktxTexture2_CreateFromNamedFile;
+    f_ktxTexture2_CreateFromMemory ktxTexture2_CreateFromMemory;
+    f_ktxTexture2_CreateFromStream ktxTexture2_CreateFromStream;
+    f_ktxTexture2_Destroy ktxTexture2_Destroy;
     f_ktxTexture2_NeedsTranscoding ktxTexture2_NeedsTranscoding;
     f_ktxTexture2_TranscodeBasis ktxTexture2_TranscodeBasis;
 }

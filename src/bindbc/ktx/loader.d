@@ -36,7 +36,7 @@ enum KTXSupport
 {
     noLibrary,
     badLibrary,
-    v432
+    v440
 }
 
 private
@@ -121,7 +121,7 @@ KTXSupport loadKTX(const(char)* libName)
                 __traits(getMember, bindbc.ktx.funcs, symbol).stringof);
     }
     
-    loadedVersion = KTXSupport.v432;
+    loadedVersion = KTXSupport.v440;
     
     if (errorCount() != errCount)
         return KTXSupport.badLibrary;

@@ -1,6 +1,6 @@
 {
-    "name": "bindbc-ktx",
-    "description": "Dynamic binding to libktx ",
+    "name": "test",
+    "description": "BindBC-KTX test",
     "homepage": "https://github.com/DLangGamedev/bindbc-ktx",
     "license": "BSL-1.0",
     "authors": [
@@ -9,24 +9,15 @@
     "copyright": "Copyright (C) 2025, Timur Gafarov",
     
     "dependencies": {
-        "bindbc-loader": "~>1.1.0"
+        "dagon": "~master",
+        "bindbc-loader": "1.1.4",
+        "bindbc-ktx": { "path": ".." }
     },
-
+    
     "importPaths": ["src"],
     "sourcePaths": ["src"],
-
+    
     "buildRequirements": [
         "allowWarnings"
-    ],
-
-    "configurations": [
-        {
-            "name": "library",
-            "targetType": "library"
-        },
-        {
-            "name": "debug",
-            "targetType": "library"
-        }
     ]
 }

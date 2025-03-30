@@ -27,12 +27,30 @@ DEALINGS IN THE SOFTWARE.
 */
 module bindbc.ktx.signatures;
 
+import std.stdio;
 import bindbc.ktx.types;
 
 extern(C) @nogc nothrow:
 
+// ktxTexture functions
+alias f_ktxTexture_CreateFromStdioStream = KTX_error_code function(FILE* stdioStream, ktxTextureCreateFlags createFlags, ktxTexture** newTex);
 alias f_ktxTexture_CreateFromNamedFile = KTX_error_code function(const(char)* filename, ktxTextureCreateFlags createFlags, ktxTexture** newTex);
+alias f_ktxTexture_CreateFromMemory = KTX_error_code function(const(ktx_uint8_t)* bytes, ktx_size_t size, ktxTextureCreateFlags createFlags, ktxTexture** newTex);
+alias f_ktxTexture_CreateFromStream = KTX_error_code function(ktxStream* stream, ktxTextureCreateFlags createFlags, ktxTexture** newTex);
+
+// ktxTexture1 functions
+alias f_ktxTexture1_CreateFromStdioStream = KTX_error_code function(FILE* stdioStream, ktxTextureCreateFlags createFlags, ktxTexture1** newTex);
 alias f_ktxTexture1_CreateFromNamedFile = KTX_error_code function(const(char)* filename, ktxTextureCreateFlags createFlags, ktxTexture1** newTex);
+alias f_ktxTexture1_CreateFromMemory = KTX_error_code function(const(ktx_uint8_t)* bytes, ktx_size_t size, ktxTextureCreateFlags createFlags, ktxTexture1** newTex);
+alias f_ktxTexture1_CreateFromStream = KTX_error_code function(ktxStream* stream, ktxTextureCreateFlags createFlags, ktxTexture1** newTex);
+alias f_ktxTexture1_Destroy = void function(ktxTexture1* tex);
+alias f_ktxTexture1_NeedsTranscoding = ktx_bool_t function(ktxTexture1* tex);
+
+// ktxTexture2 functions
+alias f_ktxTexture2_CreateFromStdioStream = KTX_error_code function(FILE* stdioStream, ktxTextureCreateFlags createFlags, ktxTexture2** newTex);
 alias f_ktxTexture2_CreateFromNamedFile = KTX_error_code function(const(char)* filename, ktxTextureCreateFlags createFlags, ktxTexture2** newTex);
+alias f_ktxTexture2_CreateFromMemory = KTX_error_code function(const(ktx_uint8_t)* bytes, ktx_size_t size, ktxTextureCreateFlags createFlags, ktxTexture2** newTex);
+alias f_ktxTexture2_CreateFromStream = KTX_error_code function(ktxStream* stream, ktxTextureCreateFlags createFlags, ktxTexture2** newTex);
+alias f_ktxTexture2_Destroy = void function(ktxTexture2* tex);
 alias f_ktxTexture2_NeedsTranscoding = ktx_bool_t function(ktxTexture2* tex);
 alias f_ktxTexture2_TranscodeBasis = KTX_error_code function(ktxTexture2* tex, ktx_transcode_fmt_e fmt, ktx_transcode_flags transcodeFlags);
