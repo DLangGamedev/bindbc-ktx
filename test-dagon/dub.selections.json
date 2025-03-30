@@ -1,0 +1,12 @@
+{
+	"fileVersion": 1,
+	"versions": {
+		"bindbc-common": "0.1.6",
+		"bindbc-ktx": {"path":".."},
+		"bindbc-loader": "1.1.4",
+		"bindbc-opengl": "1.1.1",
+		"bindbc-sdl": "1.4.8",
+		"dagon": "~master",
+		"dlib": "1.3.1"
+	}
+}
