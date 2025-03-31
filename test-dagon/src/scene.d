@@ -19,14 +19,16 @@ class MyScene: Scene
 
     override void beforeLoad()
     {
+        // KTX1 test
         aTexture1 = New!KTXAsset(TranscodeFormatPriority.Size, assetManager);
         addAsset(aTexture1, "data/test.ktx");
         
+        // KTX2 test
         aTexture2 = New!KTXAsset(TranscodeFormatPriority.Size, assetManager);
         addAsset(aTexture2, "data/test.ktx2");
         
         //aTextureEnvmap = New!KTXAsset(TranscodeFormatPriority.Quality, assetManager);
-        //addAsset(aTextureEnvmap, "data/cubemap.ktx2");
+        //addAsset(aTextureEnvmap, "data/cubemap.ktx");
     }
     
     override void onLoad(Time t, float progress)

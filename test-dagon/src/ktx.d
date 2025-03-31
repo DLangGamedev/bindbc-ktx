@@ -580,7 +580,7 @@ bool loadKTX1(InputStream istrm, string filename, TextureBuffer* buffer, bool* g
         ktxTextureCreateFlagBits.KTX_TEXTURE_CREATE_LOAD_IMAGE_DATA_BIT, &tex);
     if (err != KTX_error_code.KTX_SUCCESS)
     {
-        writeln(err);
+        writeln("Error loading ", filename, ": ", err);
         return false;
     }
     
@@ -594,7 +594,7 @@ bool loadKTX1(InputStream istrm, string filename, TextureBuffer* buffer, bool* g
     format.internalFormat = tex.glInternalformat;
     format.pixelType = tex.glType;
     
-    // Don't use automatic linearlization
+    // Don't use automatic linearization
     if (format.internalFormat == GL_SRGB8_ALPHA8)
         format.internalFormat = GL_RGBA8;
     else if (format.internalFormat == GL_SRGB8)
@@ -619,7 +619,20 @@ bool loadKTX1(InputStream istrm, string filename, TextureBuffer* buffer, bool* g
     buffer.size = size;
     buffer.mipLevels = tex.numLevels;
     buffer.data = New!(ubyte[])(tex.dataSize);
-    buffer.data[] = tex.pData[0..tex.dataSize];
+    
+    size_t dstOffset = 0;
+    for (uint cubeFace = 0; cubeFace < tex.numFaces; cubeFace++)
+    {
+        for (uint mipLevel = 0; mipLevel < buffer.mipLevels; mipLevel++)
+        {
+            ktx_size_t mipLevelOffset;
+            ktxTexture_GetImageOffset(tex, mipLevel, 0, cubeFace, &mipLevelOffset);
+            ktx_size_t mipLevelSize = ktxTexture_GetImageSize(tex, mipLevel);
+            
+            buffer.data[dstOffset..dstOffset+mipLevelSize] = tex.pData[mipLevelOffset..mipLevelOffset+mipLevelSize];
+            dstOffset += mipLevelSize;
+        }
+    }
     
     *generateMipmaps = tex.generateMipmaps;
     
