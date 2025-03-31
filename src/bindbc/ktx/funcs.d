@@ -52,4 +52,5 @@ __gshared
     f_ktxTexture2_NeedsTranscoding ktxTexture2_NeedsTranscoding;
     f_ktxTexture2_TranscodeBasis ktxTexture2_TranscodeBasis;
     f_ktxTexture2_GetImageOffset ktxTexture2_GetImageOffset;
+    f_ktxTexture2_GetNumComponents ktxTexture2_GetNumComponents;
 }

@@ -645,9 +645,32 @@ bool loadKTX2(InputStream istrm, TextureBuffer* buffer, bool* generateMipmaps)
     
     if (ktxTexture2_NeedsTranscoding(tex))
     {
-        // TODO: use user-specified format
-        // KTX_TTF_RGBA32, KTX_TTF_BC1_RGB, KTX_TTF_BC3_RGBA, KTX_TTF_BC4_R, KTX_TTF_BC5_RG, KTX_TTF_BC7_RGBA, KTX_TTF_ASTC_4x4_RGBA
-        ktx_transcode_fmt_e targetFormat = ktx_transcode_fmt_e.KTX_TTF_BC1_RGB;
+        auto numChannels = ktxTexture2_GetNumComponents(tex);
+        
+        ktx_transcode_fmt_e targetFormat;
+        string targetFormatStr;
+        if (numChannels == 1)
+        {
+            targetFormat = ktx_transcode_fmt_e.KTX_TTF_BC4_R;
+            targetFormatStr = "RGTC/BC4";
+        }
+        else if (numChannels == 2)
+        {
+            targetFormat = ktx_transcode_fmt_e.KTX_TTF_BC5_RG;
+            targetFormatStr = "RGTC/BC5";
+        }
+        else if (numChannels == 3)
+        {
+            targetFormat = ktx_transcode_fmt_e.KTX_TTF_BC1_RGB;
+            targetFormatStr = "DXT1/BC1";
+        }
+        else if (numChannels == 4)
+        {
+            targetFormat = ktx_transcode_fmt_e.KTX_TTF_BC3_RGBA;
+            targetFormatStr = "DXT5/BC3";
+        }
+        
+        writeln("Transcoding KTX2 texture to ", targetFormatStr);
         err = ktxTexture2_TranscodeBasis(tex, targetFormat, 0);
         if (err != KTX_error_code.KTX_SUCCESS)
         {
