@@ -20,12 +20,10 @@ class MyScene: Scene
     override void beforeLoad()
     {
         // KTX1 test
-        aTexture1 = New!KTXAsset(TranscodeFormatPriority.Size, assetManager);
-        addAsset(aTexture1, "data/test.ktx");
+        aTexture1 = this.addKTXAsset("data/test.ktx", TranscodeFormatPriority.Size);
         
         // KTX2 test
-        aTexture2 = New!KTXAsset(TranscodeFormatPriority.Size, assetManager);
-        addAsset(aTexture2, "data/test.ktx2");
+        aTexture2 = this.addKTXAsset("data/test.ktx2", TranscodeFormatPriority.Size);
         
         //aTextureEnvmap = New!KTXAsset(TranscodeFormatPriority.Quality, assetManager);
         //addAsset(aTextureEnvmap, "data/cubemap.ktx");

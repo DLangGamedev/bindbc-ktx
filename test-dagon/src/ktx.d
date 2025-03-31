@@ -12,6 +12,7 @@ import dlib.filesystem.filesystem;
 import dagon.core.bindings;
 import dagon.graphics.texture;
 import dagon.resource.asset;
+import dagon.resource.scene;
 
 import bindbc.ktx;
 
@@ -829,4 +830,17 @@ class KTXAsset: Asset
         if (buffer.data.length)
             Delete(buffer.data);
     }
+}
+
+KTXAsset addKTXAsset(Scene scene, string filename, TranscodeFormatPriority transcodeFormatPriority, bool preload = false)
+{
+    KTXAsset ktx;
+    if (scene.assetManager.assetExists(filename))
+        ktx = cast(KTXAsset)scene.assetManager.getAsset(filename);
+    else
+    {
+        ktx = New!KTXAsset(transcodeFormatPriority, scene.assetManager);
+        scene.addAsset(ktx, filename, preload);
+    }
+    return ktx;
 }
