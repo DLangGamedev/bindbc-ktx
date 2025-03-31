@@ -136,6 +136,7 @@ struct ktxTexture_vtbl
     PFNKTEXGETIMAGEOFFSET GetImageOffset;
     PFNKTEXGETDATASIZEUNCOMPRESSED GetDataSizeUncompressed;
     PFNKTEXGETIMAGESIZE GetImageSize;
+    PFNKTEXGETLEVELSIZE GetLevelSize;
     PFNKTEXITERATELEVELS IterateLevels;
     PFNKTEXITERATELOADLEVELFACES IterateLoadLevelFaces;
     PFNKTEXNEEDSTRANSCODING NeedsTranscoding;
@@ -164,12 +165,14 @@ extern(C) @nogc nothrow
         void* userdata);
     alias PFNKTEXDESTROY = void function(ktxTexture* tex);
     alias PFNKTEXGETIMAGEOFFSET = KTX_error_code function(
-        ktxTexture* tex, ktx_uint32_t level,
+        ktxTexture* tex,
+        ktx_uint32_t level,
         ktx_uint32_t layer,
         ktx_uint32_t faceSlice,
         ktx_size_t* pOffset);
     alias PFNKTEXGETDATASIZEUNCOMPRESSED = ktx_size_t function(ktxTexture* tex);
     alias PFNKTEXGETIMAGESIZE = ktx_size_t function(ktxTexture* tex, ktx_uint32_t level);
+    alias PFNKTEXGETLEVELSIZE = ktx_size_t function(ktxTexture* tex, ktx_uint32_t level);
     alias PFNKTEXITERATELEVELS = KTX_error_code function(
         ktxTexture* tex,
         PFNKTXITERCB iterCb,
@@ -224,7 +227,7 @@ mixin template KTXTEXTURECLASSDEFN()
     ktx_uint32_t numLayers;
     ktx_uint32_t numFaces;
     ktxOrientation orientation;
-    void*  kvDataHead;
+    ktxHashList kvDataHead;
     ktx_uint32_t kvDataLen;
     ktx_uint8_t* kvData;
     ktx_size_t dataSize;
@@ -326,9 +329,19 @@ auto ktxTexture_NeedsTranscoding(TEX)(TEX* tex)
     return tex.vtbl.NeedsTranscoding(cast(ktxTexture*)tex);
 }
 
+auto ktxTexture_GetImageOffset(TEX)(TEX* tex, ktx_uint32_t level, ktx_uint32_t layer, ktx_uint32_t faceSlice, ktx_size_t* pOffset)
+{
+    return tex.vtbl.GetImageOffset(cast(ktxTexture*)tex, level, layer, faceSlice, pOffset);
+}
+
 auto ktxTexture_GetImageSize(TEX)(TEX* tex, ktx_uint32_t level)
 {
     return tex.vtbl.GetImageSize(cast(ktxTexture*)tex, level);
+}
+
+auto ktxTexture_GetLevelSize(TEX)(TEX* tex, ktx_uint32_t level)
+{
+    return tex.vtbl.GetLevelSize(cast(ktxTexture*)tex, level);
 }
 
 auto ktxTexture_IterateLevels(TEX)(TEX* tex, PFNKTXITERCB iterCb, void* userdata)
