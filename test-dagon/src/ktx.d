@@ -569,7 +569,7 @@ bool vkFormatToGLFormat(VkFormat vkFormat, out TextureFormat tf)
     return true;
 }
 
-bool loadKTX1(InputStream istrm, TextureBuffer* buffer, bool* generateMipmaps)
+bool loadKTX1(InputStream istrm, string filename, TextureBuffer* buffer, bool* generateMipmaps)
 {
     size_t dataSize = istrm.size;
     ubyte[] data = New!(ubyte[])(dataSize);
@@ -628,7 +628,14 @@ bool loadKTX1(InputStream istrm, TextureBuffer* buffer, bool* generateMipmaps)
     return true;
 }
 
-bool loadKTX2(InputStream istrm, TextureBuffer* buffer, bool* generateMipmaps)
+enum TranscodeFormatPriority
+{
+    Uncompressed,
+    Quality,
+    Size
+}
+
+bool loadKTX2(InputStream istrm, string filename, TextureBuffer* buffer, TranscodeFormatPriority priority, bool* generateMipmaps)
 {
     size_t dataSize = istrm.size;
     ubyte[] data = New!(ubyte[])(dataSize);
@@ -639,7 +646,7 @@ bool loadKTX2(InputStream istrm, TextureBuffer* buffer, bool* generateMipmaps)
         ktxTextureCreateFlagBits.KTX_TEXTURE_CREATE_LOAD_IMAGE_DATA_BIT, &tex);
     if (err != KTX_error_code.KTX_SUCCESS)
     {
-        writeln(err);
+        writeln("Error loading ", filename, ": ", err);
         return false;
     }
     
@@ -647,9 +654,19 @@ bool loadKTX2(InputStream istrm, TextureBuffer* buffer, bool* generateMipmaps)
     {
         auto numChannels = ktxTexture2_GetNumComponents(tex);
         
+        bool bptcSupported = true; // TODO: check extension
+        
         ktx_transcode_fmt_e targetFormat;
         string targetFormatStr;
-        if (numChannels == 1)
+        
+        // TODO: support floating point textures
+        
+        if (priority == TranscodeFormatPriority.Uncompressed)
+        {
+            targetFormat = ktx_transcode_fmt_e.KTX_TTF_RGBA32;
+            targetFormatStr = "RGBA32";
+        }
+        else if (numChannels == 1)
         {
             targetFormat = ktx_transcode_fmt_e.KTX_TTF_BC4_R;
             targetFormatStr = "RGTC/BC4";
@@ -661,20 +678,36 @@ bool loadKTX2(InputStream istrm, TextureBuffer* buffer, bool* generateMipmaps)
         }
         else if (numChannels == 3)
         {
-            targetFormat = ktx_transcode_fmt_e.KTX_TTF_BC1_RGB;
-            targetFormatStr = "DXT1/BC1";
+            if (bptcSupported && priority == TranscodeFormatPriority.Quality)
+            {
+                targetFormat = ktx_transcode_fmt_e.KTX_TTF_BC7_RGBA;
+                targetFormatStr = "BPTC/BC7";
+            }
+            else
+            {
+                targetFormat = ktx_transcode_fmt_e.KTX_TTF_BC1_RGB;
+                targetFormatStr = "DXT1/BC1";
+            }
         }
         else if (numChannels == 4)
         {
-            targetFormat = ktx_transcode_fmt_e.KTX_TTF_BC3_RGBA;
-            targetFormatStr = "DXT5/BC3";
+            if (bptcSupported && priority == TranscodeFormatPriority.Quality)
+            {
+                targetFormat = ktx_transcode_fmt_e.KTX_TTF_BC7_RGBA;
+                targetFormatStr = "BPTC/BC7";
+            }
+            else
+            {
+                targetFormat = ktx_transcode_fmt_e.KTX_TTF_BC3_RGBA;
+                targetFormatStr = "DXT5/BC3";
+            }
         }
         
-        writeln("Transcoding KTX2 texture to ", targetFormatStr);
+        writeln("Transcoding ", filename, " to ", targetFormatStr);
         err = ktxTexture2_TranscodeBasis(tex, targetFormat, 0);
         if (err != KTX_error_code.KTX_SUCCESS)
         {
-            writeln(err);
+            writeln("Error loading ", filename, ": ", err);
             return false;
         }
     }
@@ -736,9 +769,12 @@ class KTXAsset: Asset
     protected TextureBuffer buffer;
     protected bool generateMipmaps = true;
     
-    this(Owner o)
+    TranscodeFormatPriority transcodeFormatPriority;
+    
+    this(TranscodeFormatPriority transcodeFormatPriority, Owner o)
     {
         super(o);
+        this.transcodeFormatPriority = transcodeFormatPriority;
         texture = New!Texture(this);
     }
     
@@ -751,9 +787,9 @@ class KTXAsset: Asset
     {
         string ext = filename.extension;
         if (ext == ".ktx" || ext == ".KTX")
-            return loadKTX1(istrm, &buffer, &generateMipmaps);
+            return loadKTX1(istrm, filename, &buffer, &generateMipmaps);
         else if (ext == ".ktx2" || ext == ".KTX2")
-            return loadKTX2(istrm, &buffer, &generateMipmaps);
+            return loadKTX2(istrm, filename, &buffer, transcodeFormatPriority, &generateMipmaps);
         else
             return false;
     }

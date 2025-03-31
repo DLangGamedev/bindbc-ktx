@@ -9,6 +9,7 @@ class MyScene: Scene
     
     KTXAsset aTexture1;
     KTXAsset aTexture2;
+    //KTXAsset aTextureEnvmap;
 
     this(Game game)
     {
@@ -18,11 +19,14 @@ class MyScene: Scene
 
     override void beforeLoad()
     {
-        aTexture1 = New!KTXAsset(assetManager);
+        aTexture1 = New!KTXAsset(TranscodeFormatPriority.Size, assetManager);
         addAsset(aTexture1, "data/test.ktx");
         
-        aTexture2 = New!KTXAsset(assetManager);
+        aTexture2 = New!KTXAsset(TranscodeFormatPriority.Size, assetManager);
         addAsset(aTexture2, "data/test.ktx2");
+        
+        //aTextureEnvmap = New!KTXAsset(TranscodeFormatPriority.Quality, assetManager);
+        //addAsset(aTextureEnvmap, "data/cubemap.ktx2");
     }
     
     override void onLoad(Time t, float progress)
@@ -32,20 +36,37 @@ class MyScene: Scene
 
     override void afterLoad()
     {
-        // Create entities, materials, initialize game logic
+        //environment.ambientMap = aTextureEnvmap.texture;
+        //environment.ambientEnergy = 1.0f;
+        environment.fogColor = Color4f(0.5f, 0.5f, 0.5f, 1.0f);
+        
         auto camera = addCamera();
+        game.renderer.activeCamera = camera;
+        
         auto freeview = New!FreeviewComponent(eventManager, camera);
         freeview.setZoom(5);
         freeview.setRotation(30.0f, -45.0f, 0.0f);
         freeview.translationStiffness = 0.25f;
         freeview.rotationStiffness = 0.25f;
         freeview.zoomStiffness = 0.25f;
-        game.renderer.activeCamera = camera;
 
         auto sun = addLight(LightType.Sun);
         sun.shadowEnabled = true;
         sun.energy = 10.0f;
         sun.pitch(-45.0f);
+        
+        /*
+        auto eSky = addEntity();
+        auto psync = New!PositionSync(eventManager, eSky, camera);
+        eSky.drawable = New!ShapeBox(Vector3f(1.0f, 1.0f, 1.0f), assetManager);
+        eSky.scaling = Vector3f(100.0f, 100.0f, 100.0f);
+        eSky.layer = EntityLayer.Background;
+        eSky.material = New!Material(assetManager);
+        eSky.material.depthWrite = false;
+        eSky.material.useCulling = false;
+        eSky.material.baseColorTexture = aTextureEnvmap.texture;
+        eSky.gbufferMask = 0.0f;
+        */
         
         auto matCube1 = addMaterial();
         matCube1.baseColorTexture = aTexture1.texture;
